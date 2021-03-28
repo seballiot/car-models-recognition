@@ -1,0 +1,127 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="pt-3 pb-2 mb-3 border-bottom">
+    <h2>Dashboard</h2>
+</div>
+
+<div class="row">
+    <div class="col-lg-7">
+        <div class="card shadow border-0 mb-4">
+            <div class="card-body">
+                <h5 class="mb-4">The 10 customers with the most previous loans</h5>
+                <canvas class="w-100" id="chart_top_10_nb_credit"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card shadow border-0 mb-4">
+            <div class="card-body">
+                <h5 class="mb-4">Gender distribution</h5>
+                <canvas class=w-100" id="chart_genders"></canvas>
+                <div class="row text-muted mt-3">
+                    <div class="col-6 px-1" style="text-align:right!important">
+                        <div><b>{{ nb_client_homme }}</b></div>
+                        <div><b>{{ nb_client_femme }}</b></div>
+                        <div><b>{{ nb_client_na }}</b></div>
+                    </div>
+                    <div class="col-6 px-1">
+                        <div>males</div>
+                        <div>females</div>
+                        <div>no data</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow border-0 mb-4">
+            <div class="card-body">
+                <h5 class="mb-4">Age range</h5>
+                <canvas class=w-100" id="bar-chart-horizontal" width="800" height="450"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block graph %}
+
+    (function () {
+        'use strict'
+
+
+        /*--- Graphique bar - Top 10 clients avec nombre de crédits ---*/
+
+        var labels = "{{ labels }}".slice(0, -1).slice(1).split(',')
+        var data = {{ data }}
+
+        var myChart = new Chart(document.getElementById('chart_top_10_nb_credit'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: ['Credits number '],
+                    data: data,
+                    backgroundColor: ["#003d2c","004d37", "#006649","00805b", "#00996e","00b380","#00cc92","#00e6a4", "#00ffb7","#33ffc5"]
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                },
+                legend: { display: false },
+                title: {
+                    display: true,
+                    position: 'bottom',
+                    text: '(Displaying SK_ID_CURR field)'
+                }
+            }
+        });
+
+        /*--- Graphique pie - Répartition du nombre d'homme et de femme ---*/
+
+        var myChart = new Chart(document.getElementById('chart_genders'), {
+            type: 'pie',
+            data: {
+                labels: ["Male ", "Female ", "No data"],
+                datasets: [{
+                    data: [{{ nb_client_homme }}, {{ nb_client_femme }}, {{ nb_client_na }}],
+                    backgroundColor: [
+                        '#003D2C',
+                        '#00C8AD',
+                        '#e5e5e5'
+                    ]
+                }]
+            }
+        });
+
+        /*--- Graphique pie - Tranches âge Clients ---*/
+
+        var myChart = new Chart(document.getElementById("bar-chart-horizontal"), {
+            type: 'horizontalBar',
+            data: {
+                labels: ["0-25", "25-45", "45-65", "65 and more"],
+                datasets: [{
+                    label: "Total ",
+                    backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+                    data: [{{ nb_age_a }},{{ nb_age_b }},{{ nb_age_c }},{{ nb_age_d }}],
+                    barThickness: 40,
+                }]
+            },
+            options: {
+                legend: { display: false }
+            }
+        });
+    })()
+
+{% endblock %}

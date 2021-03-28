@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+		<head>
+			<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+			<meta charset="utf-8" />
+			<title>Accueil</title>
+		</head>
+		<body>
+
+		<div>
+		<center>
+			<form action="{{ url_for('connexion') }}", method="post" >
+			<h1><ley>Y</ley><lbank>BANK</lbank> </h1>
+				<input type="text" name="username" placeholder="Username" autocomplete="on"
+				title="L'identifiant entre 3 et 8 caractères"><br><br>
+				<br><input type="password" name="mdp" placeholder="Password"><br>
+
+			<br> <input type="submit" value="Connexion">
+
+			</form>
+			<br><br><br><inscri> <a href="{{ url_for('inscription') }}">INSCRIPTION</inscri> <br><br><br><br><br><inscri> <a href="{{ url_for('super_admin') }}">ADMIN</inscri>
+		</center>
+		</div>
+
+	</body>
+	</html>

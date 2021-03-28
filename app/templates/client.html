@@ -1,0 +1,479 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="row align-items-center justify-content-between pt-4">
+    <div class="col-auto">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <h2>Client N°{{ client.SK_ID_CURR }}</h2>
+            </div>
+            <div class="col-auto pl-5">
+                <div class="card shadow border-0">
+                    <div class="card-body text-white rounded" style="background-color: {{ '#00cc92' if client_data_enhanced.TARGET == 0 else '#FF7490' }} !important">
+                        <h5 class="mb-0">
+                            {% if client_type == 'train' %}
+                                Client creditworthiness
+                            {% elif client_data_enhanced is not none %}
+                                Prediction of client creditworthiness
+                            {% else %}
+                                No more data for prediction, incomplete file
+                            {% endif %}
+                            <i class="fa fa-{{ 'check' if client_data_enhanced.TARGET == 0 else 'times' }}-circle text-white"></i>
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-auto">
+        <button type="button" onclick="window.print();" class="btn btn-sm btn-vert-fonce not_impression">
+            Export data <span style="padding-left:5px !important"><i class="fa fa-chart-line"></i></span>
+        </button>
+    </div>
+</div>
+
+<hr class="my-4">
+
+<div class="card shadow border-0">
+    <div class="card-body">
+        <div class="row mt-1">
+            <div class="col-lg-2 text-center">
+                <img src="{{ url_for('static', filename='img/women.png') if client.CODE_GENDER == 'F' else url_for('static', filename='img/men.png') }}" alt="" height="100">
+
+                <div class="mt-3"><h4>{{ (client.DAYS_BIRTH / -365)|int }} years old</h4></div>
+                <div><h6>Sexe : {{ "Male" if client.CODE_GENDER == "M" else "Female" if client.CODE_GENDER == "F" else "No data" }}</h6></div>
+            </div>
+            <div class="col">
+                <div class="row align-items-center justify-content-around">
+                    <div class="col-lg-5 fw-bold">Family status:</div>
+                    <div class="col-lg-5">{{ client.NAME_FAMILY_STATUS }}</div>
+                </div>
+                <hr class="my-2">
+                <div class="row align-items-center justify-content-around">
+                    <div class="col-lg-5 fw-bold">Children number:</div>
+                    <div class="col-lg-5">{{ client.CNT_CHILDREN }}</div>
+                </div>
+                <hr class="my-2">
+                <div class="row align-items-center justify-content-around">
+                    <div class="col-lg-5 fw-bold">Housing type name:</div>
+                    <div class="col-lg-5">{{ client.NAME_HOUSING_TYPE }}</div>
+                </div>
+                <hr class="my-2">
+                <div class="row align-items-center justify-content-around">
+                    <div class="col-lg-5 fw-bold">Income type:</div>
+                    <div class="col-lg-5">{{ client.NAME_INCOME_TYPE }}</div>
+                </div>
+                <hr class="my-2">
+                <div class="row align-items-center justify-content-around">
+                    <div class="col-lg-5 fw-bold">Annual income:</div>
+                    <div class="col-lg-5">${{ '{:,}'.format(client.AMT_INCOME_TOTAL) }}</div>
+                </div>
+                <hr class="my-2">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4 align-items-center">
+    <div class="col-lg-8">
+        <div class="row">
+            <div class="col">
+                <div class="card shadow border-0">
+                    <div class="card-body">
+                        <h5 class="text-center">Contract details</h5>
+                        <table class="table table-bordered mt-4">
+                            <thead>
+                            <tr>
+                                <th class="bg-light">Contrat type</th>
+                                <th class="bg-light">On day</th>
+                                <th class="bg-light">Goods price</th>
+                                <th class="bg-light">Loan total amount</th>
+                                <th class="bg-light">Annuity</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{ client.NAME_CONTRACT_TYPE }}</td>
+                                <td>{{ client_data_enhanced.WEEKDAY_APPR_PROCESS_START }} </td>
+                                <td>${{ '{:,}'.format(client.AMT_GOODS_PRICE) }} </td>
+                                <td>${{ '{:,}'.format(client.AMT_ANNUITY + client.AMT_CREDIT) }}</td>
+                                <td>${{ '{:,}'.format(client.AMT_ANNUITY) }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <br>
+                        <div class="row mt-3 mb-3">
+                            <div class="col-lg-6">
+                                <h6 class="mb-3 text-center"><u>Goods Price VS Loan Amount (without annuity)</u></h6>
+                                <canvas class=w-100" id="chart_price"></canvas>
+                            </div>
+                            <div class="col-lg-6">
+                                <h6 class="mb-3 text-center"><u>Part of goodprice covered by the loan</u></h6>
+                                <div class="row justify-content-center">
+                                    <div class="col-auto">
+                                        <div class="circle"><b>{{ (client['AMT_CREDIT'] / client['AMT_GOODS_PRICE']) * 100 }}%</b></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card shadow border-0">
+            <div class="card-body">
+                <h5 class="mb-3 text-center">Total loan</h5>
+                <canvas class=w-100" id="chart_total_amount"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="card shadow mt-4 border-0">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h5>Financial situation</h5>
+            </div>
+            <div class="col-lg-5">
+                <h6><u>Analysis of income compared to other clients</u></h6>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="row justify-content-around mt-5">
+                    <div class="col-auto text-center">
+                        <h4>${{ '{:,}'.format(client.AMT_INCOME_TOTAL) }}</h4>
+                        <br>
+                        <h6 class="text-muted">Income</h6>
+                    </div>
+                    <div class="col-auto text-center">
+                        <h4>{{ client.NAME_INCOME_TYPE }}</h4>
+                        <br>
+                        <h6 class="text-muted">Source</h6>
+                    </div>
+                    <div class="col-auto text-center">
+                        <h4>{{ client.DAYS_EMPLOYED|abs }}</h4>
+                        <br>
+                        <h6 class="text-muted">Since (in days)</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 offset-lg-1">
+                <canvas class=w-100" id="chart_revenu"></canvas>
+                <div class="mt-3">Client's income is approximately <b>{{ perc_ecart|abs }}%</b> {{ 'above' if perc_ecart >= 0 else 'below' }} the average income of other clients.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if client_data_enhanced is not none and 'AMT_BALANCE' in client_data_enhanced %}
+    <div class="card shadow border-0 mt-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h5>Credit card detail</h5>
+                </div>
+                <div class="col-lg-4 mb-2">
+                    <h6><u>Days past due</u></h6>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <div class="row justify-content-around mt-5">
+                        <div class="col-auto text-center">
+                            <h5><i class="fa {{ 'fa-caret-up text-success' if client_data_enhanced.AMT_BALANCE >= 0 else 'fa-caret-down text-danger'}} "></i>${{ '{:,}'.format(client_data_enhanced.AMT_BALANCE) }}</h5>
+                            <br>
+                            <h6 class="text-muted">Sold</h6>
+                        </div>
+                        <div class="col-auto text-center">
+                            <h5><i class="fa fa-ban text-muted"></i> ${{ '{:,}'.format(client_data_enhanced.AMT_CREDIT_LIMIT_ACTUAL) }}</h5>
+                            <br>
+                            <h6 class="text-muted">Credit limit</h6>
+                        </div>
+                        <div class="col-auto text-center">
+                            <div class="row align-items-center justify-content-center">
+                                <div class="col-auto px-1">
+                                    <i class="fa fa-minus-circle fa-2x text-warning"></i>
+                                </div>
+                                <div class="col-auto px-1">
+                                    <h5 class="mb-0">${{ '{:,}'.format(client_data_enhanced.AMT_DRAWINGS_CURRENT) }}</h5>
+                                </div>
+                            </div>
+                            <br>
+                            <h6 class="text-muted">Credit</h6>
+                        </div>
+                        <div class="col-auto text-center">
+                            <div class="row align-items-center justify-content-center">
+                                <div class="col-auto px-1">
+                                    <i class="fa fa-plus-circle fa-2x text-success"></i>
+                                </div>
+                                <div class="col-auto px-1">
+                                    <h5 class="mb-0">${{ '{:,}'.format(client_data_enhanced.AMT_TOTAL_RECEIVABLE) }}</h5>
+                                </div>
+                            </div>
+                            <br>
+                            <h6 class="text-muted">Receivable</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 offset-lg-1">
+                    <canvas class=w-100" id="chart_past_due"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center mt-4">
+        <div class="col-lg-8">
+            <div class="row">
+                <div class="col">
+                    <div class="card shadow border-0">
+                        <div class="card-body">
+                            <h5>Number of enquiries before application</h5>
+                            <small class="text-muted mt-3">Number of requests for information to the agency, before the loan request</small>
+                            <div class="progress mt-5">
+                                <div class="progress-bar bg-vert-clair" role="progressbar" style="width: {{ (client_data_enhanced.TOTAL_AMT_REQ_CREDIT_BUREAU / 20 * 100)|int }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                                    {{ client_data_enhanced.TOTAL_AMT_REQ_CREDIT_BUREAU|int }}
+                                </div>
+                            </div>
+                            <div class="row align-items-center justify-content-between mt-1">
+                                <div class="col-auto">
+                                    0
+                                </div>
+                                <div class="col-auto">
+                                    20
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                Average over all other clients : <b>{{ moy_enquiries }}</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow border-0">
+                <div class="card-body">
+                    <h5 class="mb-3 text-center">Withdrawals distribution</h5>
+                    <canvas class=w-100" id="chart_polar"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<div class="row justify-content-around mt-4">
+    <div class="col-lg-5">
+        <div class="card shadow border-0">
+            <div class="card-body text-center">
+                <h5 class="mb-0">Client own Car :</h5>
+                <div>{{ 'Yes' if client.FLAG_OWN_CAR == 'Y' else 'No' }}</div>
+                {% if client_data_enhanced is not none %}
+                    <div class="row mt-2 justify-content-center">
+                        <div class="col-auto bg-{{ 'vert-clair2' if client.FLAG_OWN_CAR == 'Y' else 'rouge' }} text-white" style="border-radius:1rem!important">
+                            <div class="pt-5 mb-3"><b>{{ client_data_enhanced.CAR_AGE_RANGE|int }}</b></div>
+                            <div class="pb-3 px-3">Age RANGE</div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card shadow border-0">
+            <div class="card-body text-center">
+                <h5 class="mb-0">Client own House : </h5>
+                <div>{{ 'Yes' if client.FLAG_OWN_REALTY == 'Y' else 'No' }}</div>
+                <div class="row mt-2 justify-content-center">
+                    <div class="col-auto bg-{{ 'vert-clair2' if client.FLAG_OWN_REALTY == 'Y' else 'rouge' }} text-white" style="border-radius:1rem!important">
+                        <div class="pt-5 mb-3"><b>{{ client_data_enhanced.NAME_HOUSING_TYPE }}</b></div>
+                        <div class="pb-3 px-3">Age RANGE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <div class="card shadow border-0">
+        <div class="card-body">
+            <h5>Application Historic</h5>
+            <div class="row align-items-center justify-content-around mt-4">
+                <div class="col-auto">
+                    <div class="row mt-2 justify-content-center" style="">
+                        <div class="col-auto bg-{{ 'rouge' if client_data_enhanced.REGISTRATION_CHANGED else 'vert-clair2' }} text-white" style="border-radius:1rem!important">
+                            <div class="p-4">REGISTRATION CHANGED</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="row mt-2 justify-content-center" style="">
+                        <div class="col-auto bg-{{ 'rouge' if client_data_enhanced.ID_PUBLISH_CHANGED else 'vert-clair2' }} text-white" style="border-radius:1rem!important">
+                            <div class="p-4">ID_PUBLISH_CHANGED</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="row mt-2 justify-content-center" style="">
+                        <div class="col-auto bg-{{ 'rouge' if client_data_enhanced.PHONE_CHANGED else 'vert-clair2' }} text-white" style="border-radius:1rem!important">
+                            <div class="p-4">PHONE_CHANGED</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="row mt-2 justify-content-center" style="">
+                        <div class="col-auto bg-{{ 'rouge' if client_data_enhanced.DOCUMENTS_PROVIDED == 0 else 'vert-clair2' }} text-white" style="border-radius:1rem!important">
+                            <div class="p-4">DOCUMENTS_PROVIDED</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>
+
+
+{% endblock %}
+
+{% block graph %}
+
+    (function () {
+        'use strict'
+
+
+        /*--- Graphique horizontalBar - Comparaison revenu ---*/
+
+        var myChart = new Chart(document.getElementById('chart_revenu'), {
+            type: 'horizontalBar',
+            data: {
+                labels: ['#{{ client.SK_ID_CURR }}', 'Average '],
+                datasets: [{
+                    label: ['Revenu annuel '],
+                    data: [{{ client.AMT_INCOME_TOTAL }}, {{ moy_revenu }}],
+                    backgroundColor: ["#00C8AD", "#003D2C"],
+                    barThickness: 40
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                },
+                legend: { display: false }
+            }
+        });
+
+
+        /*--- Graphique doughnut - Total amount ---*/
+
+        var myChart = new Chart(document.getElementById('chart_total_amount'), {
+            type: 'doughnut',
+            data: {
+                labels: ["Annnuity ", "Amount "],
+                datasets: [{
+                    data: [{{ client.AMT_ANNUITY }}, {{ client.AMT_CREDIT }}],
+                    backgroundColor: [
+                        '#003D2C',
+                        '#00C8AD'
+                    ]
+                }]
+            },
+            options: {
+                legend: {
+                    display: true,
+                    position: 'right'
+                },
+                title: {
+                    display: true,
+                    position: 'bottom',
+                    text: 'Total amount : ${{ '{:,}'.format(client.AMT_ANNUITY + client.AMT_CREDIT) }}'
+                }
+            }
+        });
+
+
+        /*--- Graphique horizontalBar - Credit info ---*/
+
+        var myChart = new Chart(document.getElementById('chart_price'), {
+            type: 'horizontalBar',
+            data: {
+                labels: ['Bien désiré', 'Prêt demandé'],
+                datasets: [{
+                    label: ['Montant ($) '],
+                    data: [{{ client.AMT_GOODS_PRICE }}, {{ client.AMT_CREDIT }}],
+                    backgroundColor: ["#00C8AD", "#003D2C"],
+                    barThickness: 40
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                },
+                legend: { display: false }
+            }
+        });
+        {% if client_data_enhanced is not none and 'AMT_BALANCE' in client_data_enhanced %}
+            /*--- Graphique doughnut - Past due ---*/
+
+            var myChart = new Chart(document.getElementById('chart_past_due'), {
+                type: 'doughnut',
+                data: {
+                    labels: ["Without tolerance", "With tolerance"],
+                    datasets: [{
+                        data: [{{ client_data_enhanced.SK_DPD }}, {{ client_data_enhanced.SK_DPD_DEF }}],
+                        backgroundColor: [
+                            '#003D2C',
+                            '#00C8AD'
+                        ]
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: true,
+                        position: 'right'
+                    },
+                    title: {
+                        display: true,
+                        position: 'bottom',
+                        text: '{{ client_data_enhanced.SK_DPD + client_data_enhanced.SK_DPD_DEF }} Days'
+                    }
+                }
+            });
+
+            /*--- Graphique doughnut - Past due ---*/
+
+            var myChart = new Chart(document.getElementById('chart_polar'), {
+                type: 'doughnut',
+                data: {
+                    labels: ["ATM withdrawals ", "withdrawals for goods ", "Others withdrawals "],
+                    datasets: [{
+                        data: [{{ client_data_enhanced.AMT_DRAWINGS_ATM_CURRENT }}, {{ client_data_enhanced.AMT_DRAWINGS_POS_CURRENT }}, {{ client_data_enhanced.AMT_DRAWINGS_OTHER_CURRENT }}],
+                        backgroundColor: [
+                            '#004d37',
+                            '#00996e',
+                            '#00e6a4'
+                        ]
+                    }]
+                }
+            });
+        {% endif %}
+
+    })()
+
+{% endblock %}
