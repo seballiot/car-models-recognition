@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Home Credit Scoring</title>
+        <title>Cars classification CNN</title>
 
         <!-- IMPORTS CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
@@ -10,11 +10,12 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/impression.css') }}" media="print">
         <link rel="shortcut icon" href="{{ url_for('static', filename='img/logo-ico.jpg') }}"/>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     </head>
     <body>
 
         <!-- NAVBAR -->
-        <form class="navbar navbar-expand-lg navbar-dark not_impression" action="{{ url_for('post_client') }}" method="POST" style="background-color:#00C8AD">
+        <nav class="navbar navbar-expand-lg bg-primary navbar-dark navbar-dark not_impression">
             <div class="container">
                 <a class="navbar-brand p-0" style="margin-right:5px!important" href="{{ url_for('dashboard') }}">
                     <img src="{{ url_for('static', filename='img/logo-blanc.png') }}" alt="" height="30" class="d-inline-block align-top">
@@ -25,24 +26,17 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link text-white {{ 'border-bottom border-2 border-white pb-1 px-0 mx-2' if page == 'dashboard' else '' }}" aria-current="page" href="{{ url_for('dashboard') }}">Dashboard</a>
+                            <a class="nav-link text-white {{ 'border-bottom border-2 border-white pb-1 px-0 mx-2' if page == 'dashboard' else '' }}" aria-current="page" href="{{ url_for('dashboard') }}">
+                                Accueil
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white {{ 'border-bottom border-2 border-white pb-1 px-0 mx-2' if page == 'clients' else '' }}" href="{{ url_for('clients', base='train') }}">Clients list</a>
+                            <a class="nav-link text-white {{ 'border-bottom border-2 border-white pb-1 px-0 mx-2' if page == 'cars' else '' }}" aria-current="page" href="{{ url_for('cars') }}">
+                                Modèles de voiture référencés
+                            </a>
                         </li>
                     </ul>
                     <form class="d-flex">
-                        <input
-                            class="form-control me-4"
-                            style="width:300px" type="text"
-                            name="id"
-                            {% if page == "client" %}
-                                placeholder="{{ client.SK_ID_CURR }}"
-                                value="{{ client.SK_ID_CURR }}"
-                            {% else  %}
-                                placeholder="Search client..."
-                            {% endif %}
-                        >
                         <div class="dropdown">
                             <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ session['username'][0].upper() + session['username'][1:] }}
@@ -57,9 +51,10 @@
                     </form>
                 </div>
             </div>
-        </form>
+        </nav>
 
-        <div class="bg-light">
+
+        <div class="">
 
                 <!-- 'INCLUDE' du code contenu dans le block 'content' du fichier html -->
                 <main class="container pb-5">
@@ -80,7 +75,7 @@
         <!-- 'INCLUDE' du code contenu dans le block 'graph' du fichier html -->
         <script type="text/javascript">
 
-            {% block graph %}{% endblock %}
+            {% block js %}{% endblock %}
 
         </script>
 

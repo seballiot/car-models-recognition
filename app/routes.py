@@ -1,6 +1,11 @@
 from flask import render_template, request, redirect, url_for, Markup, session
 from app import app, db
 from app.models import *
+import os
+import time
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'cars_img')
 
 
 ###
@@ -16,25 +21,72 @@ def accueil():
 ###
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
-    print('---')
-    print('TODO')
-    print('---')
-
-    """
     return render_template(
         'dashboard.html',
-        labels=labels,
-        data=data,
-        nb_client_homme=nb_client_homme,
-        nb_client_femme=nb_client_femme,
-        nb_client_na=nb_client_na,
-        nb_age_a=nb_age_a,
-        nb_age_b=nb_age_b,
-        nb_age_c=nb_age_c,
-        nb_age_d=nb_age_d,
         page='dashboard'
     )
-    """
+
+
+@app.route('/cars/', methods=['GET'], defaults={"page": 1})
+@app.route('/cars/<int:page>', methods=['GET'])
+def cars(page):
+    if 'username' not in session:
+        return redirect(url_for('accueil'))
+    page = page
+    per_page = 20
+
+    cars = Cars.query.paginate(page, per_page, error_out=False)
+    nb_cars = Cars.query.count()
+
+    return render_template(
+        'cars.html',
+        cars=cars,
+        per_page=20,
+        nb_cars=nb_cars,
+        page='cars'
+    )
+
+
+@app.route('/car', methods=['POST'])
+def car():
+
+    #
+    # 1. Enregistrement de l'image
+    #
+    if 'car_img' not in request.files:
+        return redirect(url_for('dashboard'))
+    file = request.files['car_img']
+
+    if file.filename == '':
+        return redirect(url_for('dashboard'))
+
+    if file and allowed_file(file.filename):
+        filename = str(time.time()) + '.' + file.filename.rsplit('.', 1)[1].lower()
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # return redirect(url_for('uploaded_file', filename=filename))
+    else:
+        return redirect(url_for('dashboard'))
+    #
+    # 2. Predictions
+    #
+    # TODO!
+
+    #
+    # 3. Recuperation en base du modele et affichage
+    #
+    car_predicted = db.engine.execute("SELECT * FROM cars_table WHERE id = 'Audi R8 Coupe 2012';")
+    car_predicted = car_predicted.fetchone()
+
+    return render_template(
+        'car.html',
+        car_predicted=car_predicted,
+        filename=filename,
+        page='car'
+    )
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 ###
 # ROUTES CONNEXION / INSCRIPTION
