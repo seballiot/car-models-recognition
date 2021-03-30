@@ -4,4 +4,4 @@ gunicorn
 numpy
 Pillow
 matplotlib
-tensorflow-cpu
+tensorflow==2.0.0
