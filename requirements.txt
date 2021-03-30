@@ -4,4 +4,4 @@ gunicorn
 numpy
 Pillow
 matplotlib
-keras
+tensorflow-cpu
