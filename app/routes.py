@@ -97,7 +97,12 @@ def car():
 
         # Appel au model et prediction
         start_time_pred = time.time()
-        model = load_model(app.config['MODEL_PATH'])
+        model = load_model(app.config['MODEL_PATH'], compile=False)
+        model.compile(
+            optimizer=keras.optimizers.Adam(lr=0.0001),
+            loss='categorical_crossentropy',
+            metrics=['accuracy']
+        )
         probas = model.predict(np.expand_dims(img, axis=0))
         exec_time_pred = round((time.time() - start_time_pred), 2)
 
