@@ -6,3 +6,4 @@ deep_learning_scripts/.ipynb_checkpoints/
 venv-cars
 app/__pycache__/*
 __pycache__/*
+cars_img
