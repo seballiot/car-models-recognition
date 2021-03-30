@@ -9,7 +9,6 @@ import numpy as np
 from PIL import Image
 import matplotlib.image as mpimg
 
-from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.inception_v3 import preprocess_input
 
@@ -98,12 +97,7 @@ def car():
 
         # Appel au model et prediction
         start_time_pred = time.time()
-        model = load_model(app.config['MODEL_PATH'], compile=False)
-        model.compile(
-            optimizer=Adam(lr=0.0001),
-            loss='categorical_crossentropy',
-            metrics=['accuracy']
-        )
+        model = load_model(app.config['MODEL_PATH'])
         probas = model.predict(np.expand_dims(img, axis=0))
         exec_time_pred = round((time.time() - start_time_pred), 2)
 
