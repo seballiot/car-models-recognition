@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="pt-4 pb-2 mb-3 border-bottom">
+    <h2>Résultat de l'analyse de l'image</h2>
+</div>
+
+<style>
+.custom-range::-webkit-slider-runnable-track {
+  background: linear-gradient(.25turn, red, 30%, yellow, 90%, green);
+}
+
+.custom-range::-webkit-slider-thumb {
+  background: black;
+}
+
+.custom-range::-moz-range-thumb {
+background: black;
+}
+
+.custom-range::-ms-thumb {
+background: black;
+}
+</style>
+
+<div class="card shadow border-0">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-4 text-center">
+                <img src="{{ url_for('static', filename='cars_img/'+filename) }}" width="100%">
+            </div>
+            <div class="col-lg-8">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5>Modèle : <span class="badge bg-primary">{{ predictions[0]['label'] }}</span></h5>
+                    </div>
+                    <div class="col-5">
+                        <h6 class="text-center"><u>Indicateur de fiabilité</u> : {{ predictions[0]['proba'] }}%</h6>
+                        <input type="range" class="form-range custom-range" id="customRange1" disabled min="0" max="100" value="{{ predictions[0]['proba'] }}">
+                    </div>
+                </div>
+
+                <h6 class="mt-5"><u>Classement des 3 meilleures prédictions</u></h6>
+                <canvas id="bar-chart-horizontal" height="80"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow border-0 mt-5">
+    <div class="card-body">
+        <h5>Fiche technique</h5>
+        <br>
+        <div>Todo graphs avec info voiture</div>
+        <div>Comparatif autre modèle similaire</div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+    new Chart(document.getElementById("bar-chart-horizontal"), {
+        type: 'horizontalBar',
+        data: {
+          labels: [
+            "{{ predictions[0]['label'] }} ({{ predictions[0]['proba'] }}%)",
+            "{{ predictions[1]['label'] }} ({{ predictions[1]['proba'] }}%)",
+            "{{ predictions[2]['label'] }} ({{ predictions[2]['proba'] }}%)",
+            ],
+          datasets: [
+            {
+              label: "Prediction (%)",
+              backgroundColor: ["#3cba9f", "#8e5ea2","#e8c3b9"],
+              data: [
+                {{ predictions[0]['proba'] }},
+                {{ predictions[1]['proba'] }},
+                {{ predictions[2]['proba'] }}
+                ],
+                barThickness: 40
+            }
+          ]
+        },
+        options: {
+          legend: { display: false },
+            scales: {
+                yAxes: [{
+                gridLines: {
+                    display:false
+                },
+                ticks: {
+                suggestedMin: 100,    // minimum will be 0, unless there is a lower value.
+                // OR //
+                beginAtZero: true   // minimum value will be 0.
+            }
+            }]
+          }
+        }
+    });
+{% endblock %}

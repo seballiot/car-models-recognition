@@ -1,3 +1,7 @@
 Flask
 Flask-SQLAlchemy
 gunicorn
+numpy
+Pillow
+matplotlib
+tensorflow
