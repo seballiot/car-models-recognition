@@ -9,8 +9,8 @@ import numpy as np
 from PIL import Image
 import matplotlib.image as mpimg
 
-from tensorflow.keras.models import load_model
-from tensorflow.keras.applications.inception_v3 import preprocess_input
+from keras.models import load_model
+from keras.applications.inception_v3 import preprocess_input
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'cars_img')
