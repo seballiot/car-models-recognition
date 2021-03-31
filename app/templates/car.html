@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<link href="{{ url_for('static', filename='css/speedometer.css') }}" rel="stylesheet">
+
 <div class="pt-4 pb-2 mb-3 border-bottom">
     <h2>Résultat de l'analyse de l'image</h2>
 </div>
@@ -57,12 +59,29 @@ background: black;
         <br>
         <div>Todo graphs avec info voiture</div>
         <div>Comparatif autre modèle similaire</div>
+        <h6><u>Vitesse maximale</u></h6>
+        <input id="myValues" value="{{ car.vitesse_max }}" class="d-none">
     </div>
 </div>
+
+<!-- 150 : 10 -->
+<!-- 200 : 10 -->
+<!-- 250 : 10 -->
+<!-- 300 : 15 -->
 
 {% endblock %}
 
 {% block js %}
+
+    $("#myValues").speedometer({
+        divFact: {{ 10 if car.vitesse_max<270 else 15 }},
+        maxVal: {{ car.vitesse_max }},
+        dangerLevel: {{ car.vitesse_max-30 }}
+    });
+
+    $( document ).ready(function(){
+        $("#myValues").change()
+    });
 
     new Chart(document.getElementById("bar-chart-horizontal"), {
         type: 'horizontalBar',
