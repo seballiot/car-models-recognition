@@ -24,6 +24,12 @@ background: black;
 .custom-range::-ms-thumb {
 background: black;
 }
+
+#bubble-chart{
+    transform: scale(0.8);
+}
+
+
 </style>
 
 <div class="card shadow border-0">
@@ -46,7 +52,7 @@ background: black;
                     </div>
                 </div>
 
-                <h6 class="mt-4"><u>Classement des 5 meilleures prédictions</u></h6>
+                <h6 class="mt-4"><u>Classement des 5 meilleures prédictions (en %)</u></h6>
                 <canvas id="bar-chart-horizontal" height="80"></canvas>
             </div>
         </div>
@@ -61,8 +67,8 @@ background: black;
         <div>Consommation en milieu urbain et sur l'autoroute
                 <canvas id="bar-chart" height="80" width="250px"></canvas>
         </div>
-        <div>Pollution du vehicule comparée à la moyenne française (Emission de CO2)  
-                       <canvas id="bubble-chart" height="80" width="250px"></canvas>
+        <div height="100px" width="100px">Pollution du vehicule comparée à la moyenne française (Emission de CO2) : g/km  
+                       <canvas id="bubble-chart" height="100px" width="100px"></canvas>
         </div>
     </div>
 </div>
@@ -100,30 +106,37 @@ background: black;
 new Chart(document.getElementById("bubble-chart"), {
     type: 'bubble',
     data: {
-      labels: "",
       datasets: [
         {
           label: ["Moyenne du véhicule"],
           backgroundColor: "rgba(255,221,50,0.2)",
           borderColor: "rgba(255,221,50,1)",
           data: [{
-            x: 5,
-            y: 5,
-            r: {{car.Emission_de_CO2}}/2
+            x: 1000,
+            y: 1000,
+            r: {{car.Emission_de_CO2}}, 
           }]
         }, {
           label: ["Moyenne Française"],
           backgroundColor: "rgba(60,186,159,0.2)",
           borderColor: "rgba(60,186,159,1)",
           data: [{
-            x: 5,
-            y: 5,
-            r: 112/2
+            x: 1000,
+            y: 1000,
+            r: 112,
           }]
         }, 
       ]
     },
     options: {
+        plugins: {
+            datalabels: {
+                anchor: 'end',
+              labels: {
+                value: {{car.Emission_de_CO2}},
+              }
+            }
+          },
        scales: {
         yAxes: [{ 
            gridLines: {
@@ -139,6 +152,7 @@ new Chart(document.getElementById("bubble-chart"), {
                },
                ticks: {
                 display: false //this will remove only the label
+
             }
         }]
       }
@@ -167,11 +181,11 @@ new Chart(document.getElementById("bar-chart"), {
         type: 'horizontalBar',
         data: {
           labels: [
-            "{{ predictions[0]['label'] }} ({{ predictions[0]['proba'] }}%)",
-            "{{ predictions[1]['label'] }} ({{ predictions[1]['proba'] }}%)",
-            "{{ predictions[2]['label'] }} ({{ predictions[2]['proba'] }}%)",
-            "{{ predictions[3]['label'] }} ({{ predictions[3]['proba'] }}%)",
-            "{{ predictions[4]['label'] }} ({{ predictions[4]['proba'] }}%)",
+            "{{ predictions[0]['label'] }}",
+            "{{ predictions[1]['label'] }}",
+            "{{ predictions[2]['label'] }}",
+            "{{ predictions[3]['label'] }}",
+            "{{ predictions[4]['label'] }}",
             ],
           datasets: [
             {
