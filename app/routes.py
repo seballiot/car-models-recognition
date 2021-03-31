@@ -104,6 +104,7 @@ def car():
         os.remove(path_file_preprocess)
 
     else:
+        # data pour faciliter les dev  de la page
         filename = 'car_placeholder.jpeg'
         car_predicted = db.engine.execute("SELECT * FROM cars_table WHERE id = 'Audi R8 Coupe 2012';")
         exec_time_pred = 0.12
