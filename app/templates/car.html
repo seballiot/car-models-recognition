@@ -71,23 +71,9 @@ background: black;
                 <br>
                 <canvas id="bar-chart" width="250px"></canvas>
                 <br><br><br>
-                <div class="row">
-                    <div class="col-lg-4">
-                        <div class="text-center">Capacité du réservoir</div>
-                        <br>
-                        <h4 class="text-center">{{ car.capacit_de_reservoir }}L</h4>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="text-center">Prix à l'achat</div>
-                        <br>
-                        <h4 class="text-center">{{ '{:,}'.format(car.prix) + '€' if car.prix is not none else 'NA' }}</h4>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="text-center">Nombre de portes</div>
-                        <br>
-                        <h4 class="text-center">{{ car.Nombre_de_porte }}</h4>
-                    </div>
-                </div>
+                <div class="text-center">Prix à l'achat</div>
+                <br>
+                <h4 class="text-center">{{ '{:,}'.format(car.prix).replace(',', ' ') + '€' if car.prix is not none else 'NA' }}</h4>
             </div>
             <div class="col-lg-7">
                 <div class="text-center">Pollution du vehicule comparée à la moyenne française (Emission de CO2) : g/km</div>
