@@ -103,7 +103,7 @@ def car():
         exec_time_pred = round((time.time() - start_time_pred), 2)
 
         predictions = []
-        for idx in probas.argsort()[0][::-1][:3]:
+        for idx in probas.argsort()[0][::-1][:5]:
             predictions.append({'label': labels[idx], 'proba': round(probas[0][idx] * 100, 2)})
 
         #
@@ -114,13 +114,15 @@ def car():
         os.remove(path_file_preprocess)
 
     else:
-        filename = '1617132551.066227.jpg'
+        filename = 'car_placeholder.jpeg'
         car_predicted = db.engine.execute("SELECT * FROM cars_table WHERE id = 'Audi R8 Coupe 2012';")
         exec_time_pred = 0.12
         predictions = [
             {'label': 'Audi R8 Coupe 2012', 'proba': 15.33},
             {'label': 'Acura TL Type-S 2008', 'proba': 8.43},
-            {'label': 'Volvo XC90 SUV 2007', 'proba': 5.68}
+            {'label': 'Volvo XC90 SUV 2007', 'proba': 5.68},
+            {'label': 'Volvo XC90 SUV 2007', 'proba': 4.2},
+            {'label': 'Volvo XC90 SUV 2007', 'proba': 1.4}
         ]
 
     car = car_predicted.fetchone()

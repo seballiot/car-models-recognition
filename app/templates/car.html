@@ -28,12 +28,15 @@ background: black;
     <div class="card-body">
         <div class="row">
             <div class="col-lg-4 text-center">
-                <img src="{{ url_for('static', filename='cars_img/'+filename) }}" width="100%">
+                <div><img src="{{ url_for('static', filename='cars_img/'+filename) }}" width="100%"></div>
             </div>
             <div class="col-lg-8">
                 <div class="row align-items-center">
                     <div class="col">
                         <h5>Modèle : <span class="badge bg-primary">{{ predictions[0]['label'] }}</span></h5>
+                        <div>
+                            <small>Durée du <span class="bg-light rounded">model.predict()</span>  : {{ exec_time_pred }}s</small>
+                        </div>
                     </div>
                     <div class="col-5">
                         <h6 class="text-center"><u>Indicateur de fiabilité</u> : {{ predictions[0]['proba'] }}%</h6>
@@ -41,7 +44,7 @@ background: black;
                     </div>
                 </div>
 
-                <h6 class="mt-5"><u>Classement des 3 meilleures prédictions</u></h6>
+                <h6 class="mt-4"><u>Classement des 5 meilleures prédictions</u></h6>
                 <canvas id="bar-chart-horizontal" height="80"></canvas>
             </div>
         </div>
@@ -68,17 +71,21 @@ background: black;
             "{{ predictions[0]['label'] }} ({{ predictions[0]['proba'] }}%)",
             "{{ predictions[1]['label'] }} ({{ predictions[1]['proba'] }}%)",
             "{{ predictions[2]['label'] }} ({{ predictions[2]['proba'] }}%)",
+            "{{ predictions[3]['label'] }} ({{ predictions[3]['proba'] }}%)",
+            "{{ predictions[4]['label'] }} ({{ predictions[4]['proba'] }}%)",
             ],
           datasets: [
             {
               label: "Prediction (%)",
-              backgroundColor: ["#3cba9f", "#8e5ea2","#e8c3b9"],
+              backgroundColor: ["#3cba9f", "#8e5ea2","#e8c3b9", "rgba(255,221,50,0.6)", "rgba(0,0,0,0.2)"],
               data: [
                 {{ predictions[0]['proba'] }},
                 {{ predictions[1]['proba'] }},
-                {{ predictions[2]['proba'] }}
+                {{ predictions[2]['proba'] }},
+                {{ predictions[3]['proba'] }},
+                {{ predictions[4]['proba'] }}
                 ],
-                barThickness: 40
+                barThickness: 20
             }
           ]
         },
