@@ -14,7 +14,7 @@ from tensorflow.keras.applications.inception_v3 import preprocess_input
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'cars_img')
-app.config['MODEL_PATH'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'model.h5')
+app.config['MODEL_PATH'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'Incept_100e_v12.h5')
 
 
 ###
@@ -116,12 +116,18 @@ def car():
         ]
 
     car = car_predicted.fetchone()
+
+    vid_fact_compteur_vitesse = 10
+    if car['vitesse_max'] is not None:
+        vid_fact_compteur_vitesse = 10 if car['vitesse_max'] < 270 else 15
+
     return render_template(
         'car.html',
         car=car,
         filename=filename,
         predictions=predictions,
         exec_time_pred=exec_time_pred,
+        vid_fact_compteur_vitesse=vid_fact_compteur_vitesse,
         page='car'
     )
 

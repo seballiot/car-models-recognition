@@ -78,7 +78,7 @@ background: black;
                     <div class="col-lg-4">
                         <div class="text-center">Prix à l'achat</div>
                         <br>
-                        <h4 class="text-center">{{ '{:,}'.format(car.prix).replace(',', ' ') }}€</h4>
+                        <h4 class="text-center">{{ '{:,}'.format(car.prix) + '€' if car.prix is not none else 'NA' }}</h4>
                     </div>
                     <div class="col-lg-4">
                         <div class="text-center">Nombre de portes</div>
@@ -244,9 +244,9 @@ background: black;
 
     /*--- Compteur vitesse max ---*/
     $("#myValues").speedometer({
-        divFact: {{ 10 if car.vitesse_max<270 else 15 }},
-        maxVal: {{ car.vitesse_max }},
-        dangerLevel: {{ car.vitesse_max-30 }}
+        divFact: {{ vid_fact_compteur_vitesse }},
+        maxVal: {{ 180 if car.vitesse_max is none else vitesse_max }},
+        dangerLevel: {{ 150 if car.vitesse_max is none else car.vitesse_max-30 }}
     });
     $( document ).ready(function(){
         $("#myValues").change()
