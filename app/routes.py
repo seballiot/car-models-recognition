@@ -32,7 +32,7 @@ def dashboard():
 @app.route('/cars/<int:page>', methods=['GET'])
 def cars(page):
     page = page
-    per_page = 20
+    per_page = 50
 
     cars = Cars.query.paginate(page, per_page, error_out=False)
     nb_cars = Cars.query.count()
@@ -40,7 +40,7 @@ def cars(page):
     return render_template(
         'cars.html',
         cars=cars,
-        per_page=20,
+        per_page=per_page,
         nb_cars=nb_cars,
         page='cars'
     )

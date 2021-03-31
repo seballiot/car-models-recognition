@@ -61,28 +61,56 @@ background: black;
 
 <div class="card shadow border-0 mt-5">
     <div class="card-body">
-        <h5>Fiche technique</h5>
-        <br>
+        <h5 class="mb-4">Informations techniques du véhicule</h5>
 
-        <div>Consommation en milieu urbain et sur l'autoroute
-                <canvas id="bar-chart" height="80" width="250px"></canvas>
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="text-center">Consommation en milieu urbain et sur l'autoroute</div>
+                <br>
+                <canvas id="bar-chart" width="250px"></canvas>
+                <br><br><br>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="text-center">Capacité du réservoir</div>
+                        <br>
+                        <h4 class="text-center">{{ car.capacit_de_reservoir }}L</h4>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="text-center">Prix à l'achat</div>
+                        <br>
+                        <h4 class="text-center">{{ '{:,}'.format(car.prix).replace(',', ' ') }}€</h4>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="text-center">Nombre de portes</div>
+                        <br>
+                        <h4 class="text-center">{{ car.Nombre_de_porte }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="text-center">Pollution du vehicule comparée à la moyenne française (Emission de CO2) : g/km</div>
+                <canvas id="bubble-chart" height="100px" width="100px"></canvas>
+            </div>
         </div>
-        <div height="100px" width="100px">Pollution du vehicule comparée à la moyenne française (Emission de CO2) : g/km  
-                       <canvas id="bubble-chart" height="100px" width="100px"></canvas>
-        </div>
+
     </div>
 </div>
 
-<div class="card shadow border-0 mt-5">
-    <div class="card-body">
-        <div class="row">
-            <div class="col">
-                <h6><u>Puissance</u></h6>
-                <div>{{ car.Puissance}}</div>
-            </div>
-            <div class="col-auto">
-                <h6 class="text-center"><u>Vitesse maximale</u></h6>
-                <input id="myValues" value="{{ car.vitesse_max }}" class="d-none">
+<div class="row justify-content-center my-5">
+    <div class="col-auto">
+        <div class="card shadow border-0">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col px-5">
+                        <h6 class="mb-3"><u>Puissance</u></h6>
+                        <br><br><br><br><br>
+                        <h3>{{ car.Puissance}} cv</h3>
+                    </div>
+                    <div class="col-auto px-5">
+                        <h6 class="text-center mb-3"><u>Vitesse maximale</u></h6>
+                        <input id="myValues" value="{{ car.vitesse_max }}" class="d-none">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -92,91 +120,7 @@ background: black;
 
 {% block js %}
 
-    /*--- Compteur vitesse max ---*/
-    $("#myValues").speedometer({
-        divFact: {{ 10 if car.vitesse_max<270 else 15 }},
-        maxVal: {{ car.vitesse_max }},
-        dangerLevel: {{ car.vitesse_max-30 }}
-    });
-
-    $( document ).ready(function(){
-        $("#myValues").change()
-    });
-
-new Chart(document.getElementById("bubble-chart"), {
-    type: 'bubble',
-    data: {
-      datasets: [
-        {
-          label: ["Moyenne du véhicule"],
-          backgroundColor: "rgba(255,221,50,0.2)",
-          borderColor: "rgba(255,221,50,1)",
-          data: [{
-            x: 1000,
-            y: 1000,
-            r: {{car.Emission_de_CO2}}, 
-          }]
-        }, {
-          label: ["Moyenne Française"],
-          backgroundColor: "rgba(60,186,159,0.2)",
-          borderColor: "rgba(60,186,159,1)",
-          data: [{
-            x: 1000,
-            y: 1000,
-            r: 112,
-          }]
-        }, 
-      ]
-    },
-    options: {
-        plugins: {
-            datalabels: {
-                anchor: 'end',
-              labels: {
-                value: {{car.Emission_de_CO2}},
-              }
-            }
-          },
-       scales: {
-        yAxes: [{ 
-           gridLines: {
-            display:false
-           },
-           ticks: {
-            display: false //this will remove only the label
-        }
-        }],
-        xAxes: [{ 
-            gridLines: {
-                display:false
-               },
-               ticks: {
-                display: false //this will remove only the label
-
-            }
-        }]
-      }
-    }
-});
-
-new Chart(document.getElementById("bar-chart"), {
-    type: 'bar',
-    data: {
-      labels: ["Conso Urbaine : {{car.consommation_urbaine}}L/100km", "Conso Autoroute : {{car.consommation_autoroute}}L/100km"],
-      datasets: [
-        {
-          label: ["Consommation moyenne"],
-          backgroundColor: ["#3e95cd", "#8e5ea2"],
-          data: [{{car.consommation_urbaine}}, {{car.consommation_autoroute}}]
-        }
-      ]
-    },
-    options: {
-        legend: { display: false },
-    }
-});
-
-
+    /*--- Graph classement des  prédictions ---*/
     new Chart(document.getElementById("bar-chart-horizontal"), {
         type: 'horizontalBar',
         data: {
@@ -190,7 +134,7 @@ new Chart(document.getElementById("bar-chart"), {
           datasets: [
             {
               label: "Prediction (%)",
-              backgroundColor: ["#3cba9f", "#8e5ea2","#e8c3b9", "rgba(255,221,50,0.6)", "rgba(0,0,0,0.2)"],
+              backgroundColor: ["#3cba9f", "rgba(142,94,162,.7)","#e8c3b9", "rgba(255,221,50,0.6)", "rgba(0,0,0,0.2)"],
               data: [
                 {{ predictions[0]['proba'] }},
                 {{ predictions[1]['proba'] }},
@@ -217,5 +161,94 @@ new Chart(document.getElementById("bar-chart"), {
             }]
           }
         }
+    });
+
+
+    /*--- Graph consommation essence ---*/
+    new Chart(document.getElementById("bar-chart"), {
+        type: 'bar',
+        data: {
+          labels: ["Conso Urbaine : {{car.consommation_urbaine}}L/100km", "Conso Autoroute : {{car.consommation_autoroute}}L/100km"],
+          datasets: [
+            {
+              label: ["Consommation moyenne"],
+              backgroundColor: ["#3e95cd", "#8e5ea2"],
+              data: [{{car.consommation_urbaine}}, {{car.consommation_autoroute}}],
+                barThickness: 40
+            }
+          ]
+        },
+        options: {
+            legend: { display: false },
+        }
+    });
+
+
+    /*--- Graph bulles ---*/
+    new Chart(document.getElementById("bubble-chart"), {
+        type: 'bubble',
+        data: {
+          datasets: [
+            {
+              label: ["Moyenne du véhicule"],
+              backgroundColor: "rgba(255,221,50,0.2)",
+              borderColor: "rgba(255,221,50,1)",
+              data: [{
+                x: 1000,
+                y: 1000,
+                r: {{car.Emission_de_CO2}},
+              }]
+            }, {
+              label: ["Moyenne Française"],
+              backgroundColor: "rgba(60,186,159,0.2)",
+              borderColor: "rgba(60,186,159,1)",
+              data: [{
+                x: 1000,
+                y: 1000,
+                r: 112,
+              }]
+            },
+          ]
+        },
+        options: {
+            plugins: {
+                datalabels: {
+                    anchor: 'end',
+                  labels: {
+                    value: {{car.Emission_de_CO2}},
+                  }
+                }
+              },
+           scales: {
+            yAxes: [{
+               gridLines: {
+                display:false
+               },
+               ticks: {
+                display: false //this will remove only the label
+            }
+            }],
+            xAxes: [{
+                gridLines: {
+                    display:false
+                   },
+                   ticks: {
+                    display: false //this will remove only the label
+
+                }
+            }]
+          }
+        }
+    });
+
+
+    /*--- Compteur vitesse max ---*/
+    $("#myValues").speedometer({
+        divFact: {{ 10 if car.vitesse_max<270 else 15 }},
+        maxVal: {{ car.vitesse_max }},
+        dangerLevel: {{ car.vitesse_max-30 }}
+    });
+    $( document ).ready(function(){
+        $("#myValues").change()
     });
 {% endblock %}
