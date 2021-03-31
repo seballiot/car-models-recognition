@@ -21,9 +21,8 @@
             <tr>
                 <th class="bg-light">Modèle</th>
                 <th class="bg-light">Prix à l'achat</th>
-                <th class="bg-light">Capacité réservoir</th>
                 <th class="bg-light">Emission CO2</th>
-                <th class="bg-light">Nombre de portes</th>
+                <th class="bg-light">Vitesse max</th>
                 <th class="bg-light">Puissance</th>
             </tr>
             </thead>
@@ -31,10 +30,9 @@
                 {% for car in cars.items %}
                 <tr>
                     <td>{{ car.id }}</td>
-                    <td>{{ '{:,}'.format(car.prix) + ' €' if car.prix is not none else 'NA' }}</td>
-                    <td>{{ car.capacit_de_reservoir|string + ' L' if car.capacit_de_reservoir is not none else 'NA' }}</td>
+                    <td>{{ '{:,}'.format(car.prix).replace(',', ' ') + ' €' if car.prix is not none else 'NA' }}</td>
                     <td>{{ car.Emission_de_CO2|string + ' g/Km' if car.Emission_de_CO2 is not none else 'NA' }}</td>
-                    <td>{{ car.Nombre_de_porte if car.Nombre_de_porte is not none else 'NA' }}</td>
+                    <td>{{ car.vitesse_max if car.vitesse_max is not none else 'NA' }} Km/h</td>
                     <td>{{ car.Puissance|string + ' cv' if car.Puissance is not none else 'NA' }}</td>
                 </tr>
                 {% endfor %}
