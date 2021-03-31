@@ -18,11 +18,20 @@
     <div class="col">
         <h5 class="mb-3">Importer une image d'une voiture</h5>
 
-        <form method="POST" action="{{ url_for('car') }}" enctype="multipart/form-data">
+        <form id="form-prediction" method="POST" action="{{ url_for('car') }}" enctype="multipart/form-data">
 
             <input class="form-control" type="file" id="img_input" name="car_img" accept="image/*" required>
 
-            <button class="btn btn-primary mt-5" type="submit"><i class="fa fa-code-branch me-1"></i> Lancer la prédiction du modèle de la voiture</button>
+            <div id="btn-submit" class="mt-5">
+                <button class="btn btn-primary" type="submit"><i class="fa fa-code-branch me-1"></i> Lancer la prédiction du modèle de la voiture</button>
+            </div>
+
+            <div id="btn-loading" style="display:none" class="mt-5">
+                <button class="btn btn-primary" type="button" disabled>
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  Prédictions en cours...
+                </button>
+            </div>
         </form>
     </div>
 </div>
@@ -30,6 +39,11 @@
 {% endblock %}
 
 {% block js %}
+
+    $('#form-prediction').submit(function(){
+        $('#btn-submit').hide()
+        $('#btn-loading').show()
+    })
 
     $("#img_input").change(function(){
         readURL(this);

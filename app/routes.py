@@ -16,6 +16,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'cars_img')
 app.config['MODEL_PATH'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'model.h5')
 
+
 ###
 # INDEX
 ###
