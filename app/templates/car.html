@@ -55,14 +55,83 @@ background: black;
     <div class="card-body">
         <h5>Fiche technique</h5>
         <br>
-        <div>Todo graphs avec info voiture</div>
-        <div>Comparatif autre modèle similaire</div>
+        <div>Consommation en milieu urbain et sur l'autoroute
+                <canvas id="bar-chart" height="80" width="250px"></canvas>
+        </div>
+        <div>Pollution du vehicule comparée à la moyenne française (Emission de CO2)  
+                       <canvas id="bubble-chart" height="80" width="250px"></canvas>
+        </div>
     </div>
 </div>
 
 {% endblock %}
 
 {% block js %}
+
+new Chart(document.getElementById("bubble-chart"), {
+    type: 'bubble',
+    data: {
+      labels: "",
+      datasets: [
+        {
+          label: ["Moyenne du véhicule"],
+          backgroundColor: "rgba(255,221,50,0.2)",
+          borderColor: "rgba(255,221,50,1)",
+          data: [{
+            x: 5,
+            y: 5,
+            r: {{car.Emission_de_CO2}}/2
+          }]
+        }, {
+          label: ["Moyenne Française"],
+          backgroundColor: "rgba(60,186,159,0.2)",
+          borderColor: "rgba(60,186,159,1)",
+          data: [{
+            x: 5,
+            y: 5,
+            r: 112/2
+          }]
+        }, 
+      ]
+    },
+    options: {
+       scales: {
+        yAxes: [{ 
+           gridLines: {
+            display:false
+           },
+           ticks: {
+            display: false //this will remove only the label
+        }
+        }],
+        xAxes: [{ 
+            gridLines: {
+                display:false
+               },
+               ticks: {
+                display: false //this will remove only the label
+            }
+        }]
+      }
+    }
+});
+
+new Chart(document.getElementById("bar-chart"), {
+    type: 'bar',
+    data: {
+      labels: ["Conso Urbaine : {{car.consommation_urbaine}}L/100km", "Conso Autoroute : {{car.consommation_autoroute}}L/100km"],
+      datasets: [
+        {
+          label: ["Consommation moyenne"],
+          backgroundColor: ["#3e95cd", "#8e5ea2"],
+          data: [{{car.consommation_urbaine}}, {{car.consommation_autoroute}}]
+        }
+      ]
+    },
+    options: {
+        legend: { display: false },
+    }
+});
 
     new Chart(document.getElementById("bar-chart-horizontal"), {
         type: 'horizontalBar',
