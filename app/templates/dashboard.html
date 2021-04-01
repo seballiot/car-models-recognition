@@ -14,6 +14,7 @@
                 width="100%"
                 alt="Attention, le fichier choisi n'est pas une image."
         >
+        <div id="filename" class="mt-2" style="display:none"></div>
     </div>
     <div class="col">
         <h5 class="mb-3">Importer une image d'une voiture</h5>
@@ -47,6 +48,8 @@
 
     $("#img_input").change(function(){
         readURL(this);
+        $('#filename').text($("#img_input").val().replace(/.*[\/\\]/, ''));
+        $('#filename').show();
     });
 
     function readURL(input) {
