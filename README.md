@@ -16,7 +16,7 @@ L'objectif de ce projet est de réaliser un réseau de neuronnes capable de dét
 
 ### Accès à l'application déployée
 
-- Heroku : TODO
+- [cars-classification.herokuapp.com](https://cars-classification.herokuapp.com)
 
 ### Composition du repository
 
