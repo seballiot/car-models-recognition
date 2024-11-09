@@ -36,7 +36,10 @@ background: black;
     <div class="card-body">
         <div class="row">
             <div class="col-lg-4 text-center">
-                <div><img src="{{ url_for('static', filename='cars_img/'+filename) }}" width="100%"></div>
+                <div>
+                    <img src="{{ url_for('static', filename='cars_img/'+filename) }}" width="100%">
+                    <div class="mt-2">{{ filename }}</div>
+                </div>
             </div>
             <div class="col-lg-8">
                 <div class="row align-items-center">

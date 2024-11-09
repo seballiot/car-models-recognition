@@ -63,6 +63,10 @@ def car():
 
             filename = str(time.time()) + '.' + file.filename.rsplit('.', 1)[1].lower()
             filename_preprocess = str(time.time()) + 'preprocess..' + file.filename.rsplit('.', 1)[1].lower()
+
+            filename = file.filename
+            filename_preprocess = 'preprocess.' + file.filename
+
             path_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             path_file_preprocess = os.path.join(app.config['UPLOAD_FOLDER'], filename_preprocess)
 
